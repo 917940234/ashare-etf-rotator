@@ -1,0 +1,52 @@
+project:
+  timezone: "Asia/Shanghai"
+  initial_capital: 20000
+  no_trade_band: 0.02
+
+data:
+  market_dir: "data/market"
+  # AKShare 接口使用 YYYYMMDD
+  start_date: "20150101"
+  end_date: null  # null 表示用今天
+  retry:
+    attempts: 5
+    wait_seconds: 2
+
+universe:
+  equity_etfs: ["510300", "510500", "159915", "588000"]
+  defensive_etf: "511360"
+
+signal:
+  momentum_lookback_days: 60
+  vol_lookback_weeks: 12
+  vol_floor: 1.0e-6
+
+risk_gate:
+  derisk_drawdown: 0.15
+  circuit_drawdown: 0.30
+  cooldown_weeks: 4
+
+allocation:
+  normal_equity_weight: 1.0
+  derisk_equity_weight: 0.5
+
+costs:
+  commission_rate: 0.0001   # 万1
+  min_commission: 5.0       # 单笔最低5元（按“每个发生交易的标的”近似）
+  stamp_tax_rate: 0.0005    # 仅卖出
+  slippage_bps: 3.0         # 单边滑点（bp）
+
+paper:
+  account_path: "data/paper/account.json"
+  blotter_dir: "reports"
+
+report:
+  backtest_html: "reports/backtest_report.html"
+  paper_html: "reports/paper_report.html"
+  backtest_rebalances_csv: "reports/backtest_rebalances.csv"
+  backtest_equity_parquet: "reports/backtest_equity.parquet"
+  paper_equity_parquet: "reports/paper_equity.parquet"
+
+logging:
+  log_path: "logs/app.log"
+  level: "INFO"

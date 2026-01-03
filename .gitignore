@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.DS_Store
+
+# 运行产物
+data/
+!data/.gitkeep
+reports/
+!reports/.gitkeep
+logs/
+!logs/.gitkeep
+
+# 本地虚拟环境
+.venv/
+venv/
+
