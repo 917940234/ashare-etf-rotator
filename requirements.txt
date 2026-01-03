@@ -1,9 +1,12 @@
 akshare>=1.13.0
 bt>=0.2.9
 quantstats>=0.0.62
+ipython>=8.0.0
+fastapi>=0.110.0
+uvicorn>=0.27.0
+itsdangerous>=2.2.0
 pyarrow>=14.0.0
 pandas>=2.1.0
 numpy>=1.26.0
 PyYAML>=6.0.1
 tenacity>=8.2.3
-
