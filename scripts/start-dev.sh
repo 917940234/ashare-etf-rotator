@@ -1,16 +1,13 @@
 #!/bin/bash
+# 开发模式启动脚本 - 支持热更新
 
-# 加载并激活 Conda 环境
 source "$HOME/miniconda3/etc/profile.d/conda.sh"
 conda activate ashare-etf-rotator
 
 cd "$(dirname "$0")/.."
 
-# 可选：自定义 JWT 密钥（生产环境建议设置）
-# export JWT_SECRET_KEY="your-custom-secret-key"
-
 echo "=========================================="
-echo "      股债轮动系统 v0.1"
+echo "      股债轮动系统 v0.1 [开发模式]"
 echo "=========================================="
 
 # 清理旧进程
@@ -22,18 +19,15 @@ sleep 1
 
 echo "Starting Backend..."
 cd src
-PYTHONUNBUFFERED=1 python -m uvicorn main:app --host 0.0.0.0 --port 8000 &
+PYTHONUNBUFFERED=1 python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
 BACKEND_PID=$!
 cd ..
 
 sleep 3
 
-echo "Building Frontend..."
+echo "Starting Frontend (dev mode)..."
 cd frontend
-NEXT_TELEMETRY_DISABLED=1 npm run build
-
-echo "Starting Frontend (production mode)..."
-npm start &
+NEXT_TELEMETRY_DISABLED=1 stdbuf -oL -eL npm run dev &
 FRONTEND_PID=$!
 cd ..
 
