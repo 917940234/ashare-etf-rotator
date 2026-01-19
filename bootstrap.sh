@@ -50,9 +50,10 @@ else
 fi
 
 # 4. Node.js 环境
+# 使用系统安装的 Node.js (v18+)，避免 Conda 安装旧版本
 if ! command -v npm &> /dev/null; then
-    echo "🔧 安装 Node.js..."
-    conda install nodejs --override-channels -c conda-forge -y
+    echo "⚠️ 未检测到 Node.js，请先安装 Node.js 18+"
+    echo "推荐命令: curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - && sudo apt install -y nodejs"
 fi
 
 # 5. 前端依赖安装 (核心修改部分)
