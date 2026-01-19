@@ -49,11 +49,41 @@ else
     echo "⚠️ 未找到 requirements.txt"
 fi
 
-# 4. Node.js 环境
-# 使用系统安装的 Node.js (v18+)，避免 Conda 安装旧版本
-if ! command -v npm &> /dev/null; then
-    echo "⚠️ 未检测到 Node.js，请先安装 Node.js 18+"
-    echo "推荐命令: curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - && sudo apt install -y nodejs"
+# 4. Node.js 环境 (使用 NVM 管理，用户级别安装，无需 sudo)
+NODE_VER="22"  # LTS 版本
+NVM_DIR="$HOME/.nvm"
+
+# 安装或加载 NVM
+if [ ! -d "$NVM_DIR" ]; then
+    echo "⬇️ 正在安装 NVM..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+fi
+
+# 加载 NVM（无论是新安装还是已存在）
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+
+# 检查 Node.js 版本，不满足则安装
+NEED_INSTALL=false
+if ! command -v node &> /dev/null; then
+    echo "⚠️ 未检测到 Node.js"
+    NEED_INSTALL=true
+else
+    CURRENT_NODE_VER=$(node -v | sed 's/v//' | cut -d. -f1)
+    if [ "$CURRENT_NODE_VER" -lt "$NODE_VER" ]; then
+        echo "⚠️ 当前 Node.js 版本过低 (v$CURRENT_NODE_VER)，需要 v$NODE_VER+"
+        NEED_INSTALL=true
+    else
+        echo "✅ Node.js $(node -v) 满足要求"
+    fi
+fi
+
+if [ "$NEED_INSTALL" = true ]; then
+    echo "📦 正在通过 NVM 安装 Node.js v$NODE_VER..."
+    nvm install "$NODE_VER"
+    nvm use "$NODE_VER"
+    nvm alias default "$NODE_VER"
+    echo "✅ Node.js $(node -v) / npm $(npm -v) 安装完成"
 fi
 
 # 5. 前端依赖安装 (核心修改部分)

@@ -4,6 +4,10 @@
 source "$HOME/miniconda3/etc/profile.d/conda.sh"
 conda activate ashare-etf-rotator
 
+# 加载 NVM 环境
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+
 cd "$(dirname "$0")/.."
 
 # 可选：自定义 JWT 密钥（生产环境建议设置）
