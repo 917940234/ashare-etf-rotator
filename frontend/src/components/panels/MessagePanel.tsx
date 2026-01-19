@@ -43,9 +43,42 @@ export function MessagePanel() {
     const postMutation = useMutation({
         mutationFn: (payload: { content: string; parent_id?: number }) =>
             api.post('/messages', payload),
+        onMutate: async (newMessage) => {
+            // 乐观更新：立即在本地添加新消息
+            await queryClient.cancelQueries({ queryKey: ['messages', page] })
+            const previousData = queryClient.getQueryData<MessagesResponse>(['messages', page])
+
+            if (previousData && user && !newMessage.parent_id) {
+                const optimisticMessage: Message = {
+                    id: Date.now(), // 临时ID
+                    user_id: user.id,
+                    username: user.username,
+                    avatar: user.avatar || null,
+                    content: newMessage.content,
+                    likes: 0,
+                    dislikes: 0,
+                    user_reaction: null,
+                    created_at: new Date().toISOString(),
+                    replies: []
+                }
+                queryClient.setQueryData<MessagesResponse>(['messages', page], {
+                    ...previousData,
+                    messages: [optimisticMessage, ...previousData.messages],
+                    total: previousData.total + 1
+                })
+            }
+            return { previousData }
+        },
+        onError: (_err, _newMessage, context) => {
+            // 回滚
+            if (context?.previousData) {
+                queryClient.setQueryData(['messages', page], context.previousData)
+            }
+        },
         onSuccess: () => {
             setContent('')
             setReplyTo(null)
+            // 重新获取以确保数据一致性
             queryClient.invalidateQueries({ queryKey: ['messages'] })
         },
     })
@@ -111,8 +144,8 @@ export function MessagePanel() {
                         <button
                             onClick={() => reactMutation.mutate({ messageId: msg.id, type: 'like' })}
                             className={`flex items-center gap-1 text-sm transition-colors ${msg.user_reaction === 'like'
-                                    ? 'text-blue-600'
-                                    : 'text-gray-400 hover:text-blue-600'
+                                ? 'text-blue-600'
+                                : 'text-gray-400 hover:text-blue-600'
                                 }`}
                         >
                             <svg className="w-4 h-4" fill={msg.user_reaction === 'like' ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
@@ -124,8 +157,8 @@ export function MessagePanel() {
                         <button
                             onClick={() => reactMutation.mutate({ messageId: msg.id, type: 'dislike' })}
                             className={`flex items-center gap-1 text-sm transition-colors ${msg.user_reaction === 'dislike'
-                                    ? 'text-red-600'
-                                    : 'text-gray-400 hover:text-red-600'
+                                ? 'text-red-600'
+                                : 'text-gray-400 hover:text-red-600'
                                 }`}
                         >
                             <svg className="w-4 h-4 rotate-180" fill={msg.user_reaction === 'dislike' ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">

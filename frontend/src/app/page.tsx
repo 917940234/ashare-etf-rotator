@@ -23,10 +23,10 @@ import {
 // Components
 import { Toast } from '@/components/ui/Toast'
 import { TradeModal, RebalanceWizard, ProfileModal, GuideModal } from '@/components/modals'
-import { StrategyPanel, BacktestPanel, TradingPanel, AdminPanel, LeaderboardPanel, MessagePanel } from '@/components/panels'
+import { StrategyPanel, BacktestPanel, TradingPanel, AdminPanel, LeaderboardPanel, MessagePanel, FundChartPanel } from '@/components/panels'
 
-type TabType = 'signal' | 'backtest' | 'trading' | 'leaderboard' | 'messages' | 'admin'
-const VALID_TABS: TabType[] = ['signal', 'backtest', 'trading', 'leaderboard', 'messages', 'admin']
+type TabType = 'signal' | 'fund' | 'backtest' | 'trading' | 'leaderboard' | 'messages' | 'admin'
+const VALID_TABS: TabType[] = ['signal', 'fund', 'backtest', 'trading', 'leaderboard', 'messages', 'admin']
 
 // 加载占位组件
 function DashboardLoading() {
@@ -103,6 +103,14 @@ function DashboardContent() {
         enabled: mounted && isLoggedIn() && activeTab === 'admin',
     })
 
+    // 获取系统配置（包含版本号）
+    const { data: appConfig } = useQuery<{ version: string }>({
+        queryKey: ['appConfig'],
+        queryFn: () => import('@/lib/store').then(m => m.api.get('/config')),
+        enabled: mounted && isLoggedIn(),
+        staleTime: Infinity, // 配置不需要频繁刷新
+    })
+
     // Mutations
     const backtestMutation = useBacktest({
         onSuccess: () => showToast('success', '✅ 回测完成'),
@@ -167,11 +175,14 @@ function DashboardContent() {
             <nav className="bg-white border-b border-gray-200 px-6 py-3 sticky top-0 z-40">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
-                            <span className="text-2xl">📊</span>
-                            QuantRotator
+                        <h1 className="text-2xl font-extrabold tracking-tight">
+                            <span className="bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
+                                QuantRotator
+                            </span>
                         </h1>
-                        <span className="badge badge-blue text-xs">v5.0</span>
+                        <span className="px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-amber-400 rounded-full border border-amber-500/30 shadow-sm">
+                            v{appConfig?.version || '0.1'}
+                        </span>
                     </div>
                     <div className="flex items-center gap-6">
 
@@ -237,6 +248,7 @@ function DashboardContent() {
                 <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit flex-wrap">
                     {[
                         { key: 'signal', label: '📊 策略信号' },
+                        { key: 'fund', label: '📉 基金行情' },
                         { key: 'backtest', label: '📈 回测分析' },
                         { key: 'trading', label: '💰 模拟交易' },
                         { key: 'leaderboard', label: '🥬 韭菜排行' },
@@ -257,6 +269,10 @@ function DashboardContent() {
             <main className="max-w-7xl mx-auto px-6 py-4 space-y-4">
                 {activeTab === 'signal' && signal && !signal.error && (
                     <StrategyPanel signal={signal} />
+                )}
+
+                {activeTab === 'fund' && (
+                    <FundChartPanel />
                 )}
 
                 {activeTab === 'backtest' && (

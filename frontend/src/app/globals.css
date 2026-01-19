@@ -28,6 +28,11 @@ body {
   color: hsl(var(--foreground));
 }
 
+::selection {
+  background-color: #f59e0b; /* amber-500 */
+  color: white;
+}
+
 /* 通用组件样式 */
 .card {
   @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;

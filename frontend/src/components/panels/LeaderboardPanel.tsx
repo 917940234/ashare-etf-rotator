@@ -57,7 +57,7 @@ export function LeaderboardPanel() {
                                 <span className="absolute -bottom-2 -right-2 text-3xl">🥈</span>
                             </div>
                             <p className="mt-3 font-medium text-gray-700">{rankings[1]?.username}</p>
-                            <p className={`text-sm font-bold ${rankings[1]?.total_pnl_pct >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            <p className={`text-sm font-bold ${rankings[1]?.total_pnl_pct >= 0 ? 'text-red-600' : 'text-green-600'}`}>
                                 {rankings[1]?.total_pnl_pct >= 0 ? '+' : ''}{rankings[1]?.total_pnl_pct}%
                             </p>
                         </div>
@@ -73,7 +73,7 @@ export function LeaderboardPanel() {
                                 />
                             </div>
                             <p className="mt-3 font-bold text-lg text-yellow-700">{rankings[0]?.username}</p>
-                            <p className={`text-base font-bold ${rankings[0]?.total_pnl_pct >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            <p className={`text-base font-bold ${rankings[0]?.total_pnl_pct >= 0 ? 'text-red-600' : 'text-green-600'}`}>
                                 {rankings[0]?.total_pnl_pct >= 0 ? '+' : ''}{rankings[0]?.total_pnl_pct}%
                             </p>
                             <span className="mt-1 px-3 py-1 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs font-bold rounded-full shadow">
@@ -92,7 +92,7 @@ export function LeaderboardPanel() {
                                 <span className="absolute -bottom-2 -right-2 text-2xl">🥉</span>
                             </div>
                             <p className="mt-3 font-medium text-gray-600">{rankings[2]?.username}</p>
-                            <p className={`text-sm font-bold ${rankings[2]?.total_pnl_pct >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            <p className={`text-sm font-bold ${rankings[2]?.total_pnl_pct >= 0 ? 'text-red-600' : 'text-green-600'}`}>
                                 {rankings[2]?.total_pnl_pct >= 0 ? '+' : ''}{rankings[2]?.total_pnl_pct}%
                             </p>
                         </div>
@@ -128,10 +128,10 @@ export function LeaderboardPanel() {
                                             </div>
                                         </td>
                                         <td>¥{user.total_value.toLocaleString()}</td>
-                                        <td className={user.total_pnl >= 0 ? 'text-green-600' : 'text-red-600'}>
+                                        <td className={user.total_pnl >= 0 ? 'text-red-600' : 'text-green-600'}>
                                             {user.total_pnl >= 0 ? '+' : ''}¥{user.total_pnl.toLocaleString()}
                                         </td>
-                                        <td className={`font-bold ${user.total_pnl_pct >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                        <td className={`font-bold ${user.total_pnl_pct >= 0 ? 'text-red-600' : 'text-green-600'}`}>
                                             {user.total_pnl_pct >= 0 ? '+' : ''}{user.total_pnl_pct}%
                                         </td>
                                     </tr>

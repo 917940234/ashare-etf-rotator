@@ -79,7 +79,11 @@ async def lifespan(app: FastAPI):
         logger.info("⏰ 定时任务已关闭")
 
 
-app = FastAPI(title="股债轮动系统", version="0.1", lifespan=lifespan)
+# 从配置读取版本号
+_cfg = load_config()
+APP_VERSION = _cfg.get("version", "0.1")
+
+app = FastAPI(title="股债轮动系统", version=APP_VERSION, lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -92,7 +96,7 @@ app.add_middleware(
 # ==================== 注册路由 ====================
 
 # 导入新路由
-from routers import messages, leaderboard, avatar
+from routers import messages, leaderboard, avatar, chart
 
 app.include_router(auth.router)
 app.include_router(data.router)
@@ -104,6 +108,7 @@ app.include_router(admin.router)
 app.include_router(messages.router)
 app.include_router(leaderboard.router)
 app.include_router(avatar.router)
+app.include_router(chart.router)
 
 
 # ==================== 基础 API ====================
@@ -111,7 +116,7 @@ app.include_router(avatar.router)
 @app.get("/api/health")
 def health():
     """健康检查"""
-    return {"status": "ok", "time": datetime.now().isoformat(), "version": "0.1"}
+    return {"status": "ok", "time": datetime.now().isoformat(), "version": APP_VERSION}
 
 
 @app.get("/api/config")

@@ -161,14 +161,14 @@ def create_user(username: str, password: str) -> tuple[bool, str]:
         conn.close()
 
 
-def authenticate_user(username: str, password: str) -> Optional[dict]:
-    """认证用户"""
+def authenticate_user(username: str, password: str) -> tuple[Optional[dict], str]:
+    """认证用户，返回 (用户信息, 错误信息)"""
     user = get_user(username)
     if not user:
-        return None
+        return None, "用户名不存在"
     if not verify_password(password, user["password_hash"]):
-        return None
-    return user
+        return None, "密码错误"
+    return user, ""
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None) -> str:

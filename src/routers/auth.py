@@ -43,9 +43,9 @@ def api_register(req: RegisterRequest):
 @router.post("/login")
 def api_login(req: LoginRequest):
     """用户登录"""
-    user = authenticate_user(req.username, req.password)
+    user, error_msg = authenticate_user(req.username, req.password)
     if not user:
-        raise HTTPException(401, "用户名或密码错误")
+        raise HTTPException(401, error_msg)
     token = create_access_token({"sub": user["username"]})
     return {
         "access_token": token,

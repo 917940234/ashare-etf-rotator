@@ -2,7 +2,7 @@
 留言墙路由 - /api/messages/*
 """
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional
@@ -10,6 +10,8 @@ from typing import Optional
 from deps import require_user
 from auth import DB_PATH
 
+# 北京时区 UTC+8
+CN_TZ = timezone(timedelta(hours=8))
 
 router = APIRouter(prefix="/api/messages", tags=["留言墙"])
 
@@ -122,7 +124,7 @@ def create_message(req: CreateMessageRequest, user: dict = Depends(require_user)
     c.execute('''
         INSERT INTO messages (user_id, content, parent_id, created_at)
         VALUES (?, ?, ?, ?)
-    ''', (user['id'], req.content.strip(), req.parent_id, datetime.now().isoformat()))
+    ''', (user['id'], req.content.strip(), req.parent_id, datetime.now(CN_TZ).isoformat()))
     
     message_id = c.lastrowid
     conn.commit()
@@ -176,7 +178,7 @@ def react_to_message(message_id: int, req: ReactionRequest, user: dict = Depends
             c.execute('''
                 INSERT INTO message_reactions (message_id, user_id, reaction_type, created_at)
                 VALUES (?, ?, ?, ?)
-            ''', (message_id, user['id'], req.reaction_type, datetime.now().isoformat()))
+            ''', (message_id, user['id'], req.reaction_type, datetime.now(CN_TZ).isoformat()))
             
             if req.reaction_type == 'like':
                 likes += 1
@@ -188,7 +190,7 @@ def react_to_message(message_id: int, req: ReactionRequest, user: dict = Depends
         c.execute('''
             INSERT INTO message_reactions (message_id, user_id, reaction_type, created_at)
             VALUES (?, ?, ?, ?)
-        ''', (message_id, user['id'], req.reaction_type, datetime.now().isoformat()))
+        ''', (message_id, user['id'], req.reaction_type, datetime.now(CN_TZ).isoformat()))
         
         if req.reaction_type == 'like':
             likes += 1
