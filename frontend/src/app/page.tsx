@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/lib/store'
@@ -28,7 +28,29 @@ import { StrategyPanel, BacktestPanel, TradingPanel, AdminPanel, LeaderboardPane
 type TabType = 'signal' | 'backtest' | 'trading' | 'leaderboard' | 'messages' | 'admin'
 const VALID_TABS: TabType[] = ['signal', 'backtest', 'trading', 'leaderboard', 'messages', 'admin']
 
+// 加载占位组件
+function DashboardLoading() {
+    return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-500">加载中...</p>
+            </div>
+        </div>
+    )
+}
+
+// 主组件入口（用 Suspense 包裹）
 export default function Dashboard() {
+    return (
+        <Suspense fallback={<DashboardLoading />}>
+            <DashboardContent />
+        </Suspense>
+    )
+}
+
+// 实际内容组件
+function DashboardContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const queryClient = useQueryClient()
