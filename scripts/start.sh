@@ -6,12 +6,8 @@ conda activate ashare-etf-rotator
 
 cd "$(dirname "$0")/.."
 
-# ========== 环境变量配置（敏感信息）==========
-export AUTH_USERNAME="永恒的谜团"
-export AUTH_PASSWORD="Welcome911360"
-# 可选：自定义 JWT 密钥
+# 可选：自定义 JWT 密钥（生产环境建议设置）
 # export JWT_SECRET_KEY="your-custom-secret-key"
-# =============================================
 
 echo "=========================================="
 echo "      股债轮动系统 v0.1"

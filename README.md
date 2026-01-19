@@ -17,9 +17,13 @@ pip3 install -r requirements.txt
 # 2. 安装前端依赖
 cd frontend && npm install && cd ..
 
-# 3. 启动
+# 3. 初始化管理员账户（首次部署）
+python scripts/init_admin.py <用户名> <密码>
+
+# 4. 启动
 bash scripts/start.sh
 ```
+
 
 *   前端: http://localhost:3000
 *   后端 API: http://localhost:8000/docs

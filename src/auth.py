@@ -1,6 +1,6 @@
 """
 用户认证模块 - JWT + SQLite (v0.1 安全版)
-敏感信息通过环境变量配置，解决 GitGuardian 安全警告
+管理员账户通过 scripts/init_admin.py 脚本初始化
 """
 import os
 import sqlite3
@@ -18,10 +18,6 @@ DB_PATH = DATA_DIR / "users.db"
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "ashare-etf-rotator-secret-key-2026")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 24
-
-# 管理员账户（从环境变量读取）
-ADMIN_USERNAME = os.environ.get("AUTH_USERNAME", "admin")
-ADMIN_PASSWORD = os.environ.get("AUTH_PASSWORD", "")
 
 
 def hash_password(password: str, salt: str = None) -> str:
@@ -109,16 +105,6 @@ def init_db():
         conn.commit()
     except:
         pass  # 字段已存在
-    
-    # 确保管理员存在
-    c.execute("SELECT id FROM users WHERE username = ?", (ADMIN_USERNAME,))
-    if not c.fetchone():
-        password_hash = hash_password(ADMIN_PASSWORD)
-        c.execute(
-            "INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, 1)",
-            (ADMIN_USERNAME, password_hash)
-        )
-        conn.commit()
     
     conn.close()
 
