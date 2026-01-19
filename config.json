@@ -1,0 +1,57 @@
+{
+    "assets": {
+        "risk": [
+            {
+                "code": "510300",
+                "name": "沪深300ETF华泰柏瑞",
+                "desc": "权益核心/温度计"
+            },
+            {
+                "code": "515300",
+                "name": "300红利低波ETF",
+                "desc": "降低权益波动"
+            },
+            {
+                "code": "510880",
+                "name": "红利ETF",
+                "desc": "价值分散"
+            },
+            {
+                "code": "510500",
+                "name": "XD中证500ETF",
+                "desc": "收益增强"
+            }
+        ],
+        "defensive": [
+            {
+                "code": "511160",
+                "name": "国债ETF东财",
+                "weight": 0.7
+            },
+            {
+                "code": "511990",
+                "name": "华宝添益ETF",
+                "weight": 0.2
+            },
+            {
+                "code": "511010",
+                "name": "国债ETF",
+                "weight": 0.1
+            }
+        ],
+        "benchmark": {
+            "code": "510300",
+            "name": "沪深300ETF华泰柏瑞"
+        }
+    },
+    "strategy": {
+        "risk_switch_ma": 10,
+        "momentum_months": 6,
+        "risk_weight_on": 0.35,
+        "risk_weight_off": 0.0,
+        "rebalance_freq": "M"
+    },
+    "paper": {
+        "initial_capital": 100000
+    }
+}

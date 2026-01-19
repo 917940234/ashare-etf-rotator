@@ -1,12 +1,20 @@
+# 核心依赖
 akshare>=1.13.0
-bt>=0.2.9
-quantstats>=0.0.62
-ipython>=8.0.0
-fastapi>=0.110.0
-uvicorn>=0.27.0
-itsdangerous>=2.2.0
+pandas>=2.0.0
 pyarrow>=14.0.0
-pandas>=2.1.0
-numpy>=1.26.0
-PyYAML>=6.0.1
-tenacity>=8.2.3
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+
+# 回测框架
+bt>=1.1.0
+ffn>=1.0.0
+
+# 用户认证
+python-jose[cryptography]>=3.3.0
+python-multipart>=0.0.9
+
+# 报告生成
+quantstats>=0.0.62
+
+# 定时任务
+apscheduler>=3.10.0

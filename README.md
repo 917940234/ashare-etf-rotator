@@ -1,51 +1,59 @@
-# A股ETF周频轮动（前后端分离：FastAPI + Next.js）
+# A股 ETF 轮动系统 v0.1
 
-> 仅供个人学习研究自用，不构成投资建议，不用于商业用途。市场有风险，投资需谨慎。
+> **声明**：仅供学习研究，不构成投资建议。
 
-这是一个“周频（每周一次）A股场内ETF轮动”项目：
-- **核心逻辑（core）**：AKShare 拉取ETF日线并本地 Parquet 缓存；bt 回测；纸交易记账；quantstats 报告。
-- **后端（backend）**：FastAPI 提供统一 API（更新数据/回测/周计划/纸交易/配置/日志/报告下载）。
-- **前端（frontend）**：Next.js + shadcn/ui 中文控制台（按钮式操作、配置编辑、报告/日志查看）。
+## 极简设计理念
 
-## 一键启动（WSL/Ubuntu）
-在项目根目录执行：
+*   **无框架回测**：纯 Pandas 实现，~200 行代码
+*   **无数据库**：JSON 文件存储配置和账户
+*   **最少依赖**：后端仅 5 个核心库
+
+## 快速启动
+
 ```bash
+# 1. 安装后端依赖
+pip3 install -r requirements.txt
+
+# 2. 安装前端依赖
+cd frontend && npm install && cd ..
+
+# 3. 启动
 bash scripts/start.sh
 ```
 
-启动后打开：
-- 前端 UI：`http://127.0.0.1:3000`
-- 后端 API：`http://127.0.0.1:8000/api/health`
+*   前端: http://localhost:3000
+*   后端 API: http://localhost:8000/docs
 
-## 登录方式（不允许注册）
-系统只允许固定账号登录（后端写死、已加密校验）：
-- 用户名：`永恒的谜团`
-- 密码：`Welcome1234`
+## 核心功能
 
-## 你在控制台里要做的事（新手只记这三步）
-1) **更新数据**：把ETF日线拉到本地缓存（保证可复现）。
-2) **生成周计划（周五）**：给出下周目标权重（你用券商APP手动下单）。
-3) **运行纸交易（下周一收盘后）**：用统一假设“记账一次”，生成交易清单与纸账户净值。
+1.  **更新数据**: 从 AKShare 拉取 ETF 日线
+2.  **本周信号**: 按动量/波动率评分，推荐持仓
+3.  **回测**: 查看策略历史表现
 
-“运行回测”用于偶尔验证策略历史表现与成本影响，不需要每周都跑。
+## 项目结构
 
-## 目录结构
-```text
-core/       策略核心（AKShare + bt + quantstats + 纸交易）
-backend/    FastAPI 服务（登录、任务、配置、产物、日志）
-frontend/   Next.js 中文控制台（shadcn/ui）
-config/     配置文件（config.yaml）
-data/       本地缓存与纸账户（运行后生成）
-reports/    报告/计划单/交易清单（运行后生成）
-logs/       日志（运行后生成）
-scripts/    一键启动脚本
+```
+├── src/              # Python 后端
+│   ├── main.py       # FastAPI 入口
+│   ├── data.py       # AKShare 数据服务
+│   ├── backtest.py   # 回测引擎
+│   └── account.py    # 纸交易账户
+├── frontend/         # Next.js 前端
+├── config.json       # 配置文件
+└── data/             # 数据存储
 ```
 
-## 成本模型说明（重要）
-项目会近似计入：
-- 佣金（按成交额比例 + 单笔最低 5 元）
-- 卖出印花税
-- 滑点（bps）
+## 配置说明 (`config.json`)
 
-这些参数都在 `config/config.yaml` 的 `costs` 中可调；实际券商费用以券商为准。
-
+```json
+{
+  "universe": {
+    "equity": ["510300", "510500"],  // 参与轮动的ETF
+    "bond": ["511010"]                // 避险资产
+  },
+  "strategy": {
+    "momentum_days": 20,  // 动量窗口
+    "hold_count": 1       // 持有数量
+  }
+}
+```

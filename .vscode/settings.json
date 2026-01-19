@@ -1,5 +1,22 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:conda",
-    "python-envs.defaultPackageManager": "ms-python.python:conda",
-    "python-envs.pythonProjects": []
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/frontend/node_modules/**": true,
+    "**/frontend/.next/**": true,
+    "**/data/**": true,
+    "**/reports/**": true,
+    "**/logs/**": true
+  },
+  "search.exclude": {
+    "**/frontend/node_modules/**": true,
+    "**/frontend/.next/**": true,
+    "**/data/**": true,
+    "**/reports/**": true,
+    "**/logs/**": true
+  },
+  "python-envs.defaultEnvManager": "ms-python.python:conda",
+  "python-envs.defaultPackageManager": "ms-python.python:conda",
+  "python-envs.pythonProjects": []
 }
+
