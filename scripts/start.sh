@@ -22,7 +22,7 @@ sleep 1
 
 echo "Starting Backend..."
 cd src
-python -m uvicorn main:app --host 0.0.0.0 --port 8000 &
+PYTHONUNBUFFERED=1 python -m uvicorn main:app --host 0.0.0.0 --port 8000 &
 BACKEND_PID=$!
 cd ..
 
@@ -31,7 +31,8 @@ sleep 3
 echo "Starting Frontend..."
 cd frontend
 # 禁用版本检查避免网络超时
-NEXT_TELEMETRY_DISABLED=1 npm run dev &
+# 使用 stdbuf 强制输出行缓冲，解决 tmux 中日志不显示的问题
+NEXT_TELEMETRY_DISABLED=1 stdbuf -oL -eL npm run dev &
 FRONTEND_PID=$!
 cd ..
 
