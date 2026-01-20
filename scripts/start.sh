@@ -26,7 +26,8 @@ sleep 1
 
 echo "Starting Backend..."
 cd src
-PYTHONUNBUFFERED=1 python -m uvicorn main:app --host 0.0.0.0 --port 8000 &
+# 使用 4 个 workers 提高并发，设置超时避免请求挂起
+PYTHONUNBUFFERED=1 python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4 --timeout-keep-alive 30 &
 BACKEND_PID=$!
 cd ..
 

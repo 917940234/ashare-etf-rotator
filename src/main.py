@@ -36,21 +36,25 @@ def start_scheduler():
     try:
         from apscheduler.schedulers.background import BackgroundScheduler
         from apscheduler.triggers.cron import CronTrigger
+        import pytz
         
-        scheduler = BackgroundScheduler()
-        # 每天 18:00 更新数据（A股收盘后）
+        # 使用北京时区，确保在 A股收盘后更新
+        beijing_tz = pytz.timezone('Asia/Shanghai')
+        
+        scheduler = BackgroundScheduler(timezone=beijing_tz)
+        # 每天北京时间 18:00 更新数据（A股收盘后）
         scheduler.add_job(
             run_data_update,
-            CronTrigger(hour=18, minute=0),
+            CronTrigger(hour=18, minute=0, timezone=beijing_tz),
             id="daily_data_update",
             name="每日数据更新",
             replace_existing=True
         )
         scheduler.start()
-        logger.info("⏰ 定时任务已启动: 每天 18:00 自动更新数据")
+        logger.info("⏰ 定时任务已启动: 每天北京时间 18:00 自动更新数据")
         return scheduler
-    except ImportError:
-        logger.warning("⚠️ APScheduler 未安装，跳过定时任务")
+    except ImportError as e:
+        logger.warning(f"⚠️ 定时任务依赖未安装 ({e})，跳过定时任务")
         return None
 
 
@@ -63,13 +67,9 @@ async def lifespan(app: FastAPI):
     # 启动定时任务
     scheduler = start_scheduler()
     
-    # 后台线程更新数据（避免阻塞启动）
-    def startup_update():
-        logger.info("📊 检查数据状态...")
-        run_data_update()
-    
-    thread = threading.Thread(target=startup_update, daemon=True)
-    thread.start()
+    # 定时任务会在每天 18:00 自动更新数据（后台静默进行）
+    # 启动时不立即更新，避免阻塞服务启动
+    logger.info("📊 数据将在每天 18:00 自动更新")
     
     yield
     
